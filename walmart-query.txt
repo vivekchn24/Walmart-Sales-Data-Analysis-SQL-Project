@@ -1,0 +1,71 @@
+ALTER TABLE walmart_csv ADD COLUMN time_of_day varchar(20);
+
+UPDATE walmart_csv SET time_of_day = (CASE WHEN Time BETWEEN "00:00:00" AND "12:00:00" THEN "Morning" WHEN Time BETWEEN "12:01:00" AND "16:00:00" THEN "Afternoon" ELSE "Evening" END );
+
+ALTER TABLE walmart_csv ADD COLUMN day_name varchar(10);
+
+UPDATE walmart_csv SET day_name = DAYNAME(Date);
+
+ALTER TABLE walmart_csv ADD COLUMN month_name varchar(10);
+
+UPDATE walmart_csv SET month_name = MONTHNAME(Date);
+
+SELECT DISTINCT City from walmart_csv;
+
+SELECT DISTINCT City,Branch FROM walmart_csv;
+
+ALTER TABLE walmart_csv RENAME COLUMN `Product line` TO Product_line;
+
+SELECT COUNT(DISTINCT Product_line) from walmart_csv;
+
+SELECT Payment,COUNT(Payment) FROM walmart_csv GROUP BY Payment;
+
+SELECT Product_line,COUNT(Product_line) as product FROM walmart_csv GROUP BY Product_line ORDER BY product DESC;
+
+SELECT month_name AS month,SUM(Total) AS total_revenue FROM walmart_csv GROUP BY month_name ORDER BY total_revenue DESC;
+
+SELECT month_name AS month,SUM(cogs) AS COGS FROM walmart_csv GROUP BY month_name ORDER BY cogs DESC;
+
+SELECT Product_line,SUM(Total) AS total_revenue from walmart_csv GROUP BY Product_line ORDER BY total_revenue;
+
+SELECT City,SUM(Total) AS total_revenue from walmart_csv GROUP BY City ORDER BY total_revenue DESC;
+
+ALTER TABLE walmart_csv RENAME COLUMN `Tax 5%` TO Tax;
+
+SELECT Product_line,SUM(Tax) AS total_tax from walmart_csv GROUP BY Product_line ORDER BY total_tax DESC;
+
+SELECT Branch,SUM(Quantity) AS total_quantity FROM walmart_csv GROUP BY Branch HAVING SUM(Quantity)>(SELECT AVG(Quantity) FROM walmart_csv);
+
+SELECT Gender,Product_line,COUNT(Gender) AS total_gen FROM walmart_csv GROUP BY Gender,Product_line ORDER BY total_gen DESC;
+
+SELECT AVG(Rating) AS avg_rating,Product_line FROM walmart_csv GROUP BY Product_line ORDER BY avg_rating DESC;
+
+SELECT time_of_day,COUNT(*) AS total_sales FROM walmart_csv WHERE day_name = "Monday"
+
+ALTER TABLE walmart_csv RENAME COLUMN `Customer type` TO Customer_type;
+
+SELECT Customer_type,SUM(Total) AS total_rev FROM walmart_csv GROUP BY Customer type ORDER BY total_rev DESC;
+
+SELECT City,AVG(Tax) AS avg_tax FROM walmart_csv GROUP BY City ORDER BY avg_tax DESC;
+
+SELECT Customer_type,AVG(Tax) AS Tax FROM walmart_csv GROUP BY Customer_type ORDER BY Tax DESC;
+
+SELECT COUNT(DISTINCT(Customer_type)) FROM walmart_csv;
+
+SELECT COUNT(DISTINCT(Payment)) FROM walmart_csv;
+
+SELECT Customer_type,COUNT(*) AS Customer_count FROM walmart_csv GROUP BY Customer_type;
+
+SELECT Gender,COUNT(*) AS gender_count FROM walmart_csv GROUP BY Gender ORDER BY gender_count DESC;
+
+SELECT Gender,COUNT(*) AS gender_count FROM walmart_csv WHERE Branch = "C";
+
+SELECT Gender,COUNT(*) AS gender_count FROM walmart_csv GROUP BY Gender ORDER BY gender_count DESC;
+
+SELECT time_of_day,SUM(Rating) AS total_rating FROM walmart_csv GROUP BY time_of_day ORDER BY total_rating;
+
+SELECT time_of_day,SUM(Rating) AS total_rating from walmart_csv WHERE Branch = "C" GROUP BY time_of_day ORDER BY total_rating;
+
+SELECT day_name,AVG(Rating) as avg_rating from walmart_csv GROUP BY day_name ORDER BY avg_rating DESC;
+
+SELECT day_name,AVG(Rating) AS avg_rating from walmart_csv WHERE Branch = "C" GROUP BY day_name ORDER BY avg_rating DESC;
